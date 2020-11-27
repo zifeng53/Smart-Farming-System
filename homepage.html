@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Smart Farming System</title>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <style>
+      body {
+        margin: 0;
+        background: white;
+        font-family: "Work Sans", sans-serif;
+        font-weight: 400;
+      }
+
+      .header-container,
+      .body-container {
+        width: 80%;
+        margin: 0 auto;
+      }
+
+      header {
+        background: #ffffff;
+        color: black;
+      }
+
+      header::after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+
+      .logo {
+        float: left;
+        padding: 10px 0;
+      }
+
+      nav {
+        float: right;
+      }
+
+      nav ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      nav li {
+        display: inline-block;
+        margin-left: 50px;
+        padding: 25px 0;
+        position: relative;
+      }
+
+      nav a {
+        color: #444;
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 17px;
+      }
+
+      nav a:hover {
+        color: #000;
+      }
+
+      nav a::before {
+        content: "";
+        display: block;
+        width: 0%;
+        height: 5px;
+        background-color: #444;
+        position: absolute;
+        top: 0;
+        transition: all ease-in-out 200ms;
+      }
+
+      nav a:hover:before {
+        width: 100%;
+      }
+
+      #btnScrollToTop {
+        position: fixed;
+        right: 10px;
+        bottom: 10px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: none;
+        background: #e62739;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+        color: white;
+        outline: none;
+        cursor: pointer;
+      }
+
+      #btnScrollToTop:active {
+        background: #cc2333;
+      }
+
+      /* yungjun css */
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      p {
+        font-weight: 300;
+        color: #111;
+      }
+
+      .banner {
+        position: relative;
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: url(https://drive.google.com/uc?id=14Fid2KZ2K-Slh8ZP0JVimYj_QUFHziC5);
+        background-size: cover;
+      }
+
+      .banner .content {
+        font-size: 20px;
+        max-width: 1100px;
+        text-align: center;
+      }
+
+      .banner .content h2 {
+        font-size: 3em;
+        /* color:#fff; */
+      }
+
+      #titleLightAutomation {
+        text-align: center;
+      }
+      #picLightAutomation {
+        margin-top: -300px;
+        height: 400px;
+        width: auto;
+      }
+      #p1LightAutomation {
+        margin-left: 670px;
+        margin-top: 50px;
+      }
+      #p2LightAutomation {
+        border: 1px solid black;
+        text-align: center;
+      }
+    </style>
+    <header>
+      <div class="header-container">
+        <img src="#" alt="logo" class="logo" />
+        <nav>
+          <ul>
+            <li><a href="homepage.html">Home</a></li>
+            <li><a href="Light.html">Light Automation</a></li>
+            <li><a href=".html">Watering System</a></li>
+            <li><a href=".html">Gate</a></li>
+            <li><a href=".html">Sound</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <hr />
+    <br />
+    <div class="body-container">
+      <!-- <b>Introduction</b>
+        
+        <img src="#"/>
+   
+        <p>Smart Farming System</p>
+        <button id="btnScrollToTop">
+            <i class="material-icons">arrow_upward</i>
+        </button> -->
+      <section class="banner" id="banner">
+        <div class="content">
+          <h2>Iot on Farming</h2>
+          <h5>Presented to you by:</h5>
+          <h5>
+            Liew Zi Feng, Andre Lim Tong En, Vikneswari a/p Perumal, Yong Yung
+            Jun
+          </h5>
+          <p>
+            Farming seems to be a tedious job, but now with our IoT Automation
+            Solution, hazzle no more. You can now leave all the hard farming
+            work to us and go for a vacation! Do not hesitate and join us now!
+          </p>
+        </div>
+      </section>
+      <script>
+        const btnScrollToTop = document.querySelector("#btnScrollToTop");
+        btnScrollToTop.addEventListener("click", function () {
+          $("html,body").animate({ scrollTop: 0 }, "slow");
+        });
+      </script>
+    </div>
+  </body>
+</html>
