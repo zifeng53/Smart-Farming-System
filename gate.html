@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <title>Gate</title>
@@ -9,9 +10,10 @@
     <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-database.js"></script>
-   
+
 
 </head>
+
 <body>
     <p id="datetime">Date/ Time: </p>
     <img id="displayPic" src="https://drive.google.com/uc?id=1DTJn9k77316HcZr61ruuvIXEq6ChXGr1" />
@@ -20,8 +22,8 @@
         <input type="submit" value="Submit" />
     </form>
     <button onclick="getTestValue()">Display Value</button>
-    <button id="open-btn" onclick="gateActivate(true)">Open</button>
-    <button id="open-btn" onclick="gateActivate(false)">Close</button>
+    <button id="openBtn">Open</button>
+    <button id="closeBtn">Close</button>
     <p id="ultra_value" style="font-size:50px">Distance: </p>
 
     <script>
@@ -40,6 +42,15 @@
         console.log(firebase);
         // Get a reference to the database service
         var database = firebase.database();
+
+        //displayLOGO
+        var openOLED = {
+            oledsc: "1",
+            relay1: "1",
+            relay2: "0",
+            lcdtxt: "=  TRYING  ="
+        }
+        database.ref('PI_04_CONTROL').update(openOLED);
 
         //GET CURRENT DATE TIME 
         var today = new Date();
@@ -64,99 +75,92 @@
             startTime = new Date();
         };
         function endTimer() {
-            //if (x < 100) {
             endTime = new Date();
             var timeDiff = endTime - startTime;
             var seconds = Math.round(timeDiff / 1000);
             console.log(seconds + " seconds");
             timeElapsed(seconds);
-            //}
         };
         function timeElapsed(sec) {
             return sec;
         }
 
-        //get ultrasonic value
-        /*
         database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
-                var ultra = childSnapshot.val().ultra;
+                var ultra = childSnapshot.val().ultra;          // GET ULTRASONIC VALUE
                 document.getElementById("datetime").textContent = 'Date/Time: ' + today;
                 console.log("Ultrasonic: " + ultra);
                 document.getElementById("ultra_value").textContent = 'Distance: ' + ultra + 'cm';
 
-                window.onload = function () {
-                    document.onload = function () {
-                        function gateImg(x) {
-                            var gateOpenPic = "https://drive.google.com/uc?id=1kFm-y5v5hUisjtxHIFta4cSM2KS3Wg1m";
-                            var gateClosedPic = "https://drive.google.com/uc?id=1DTJn9k77316HcZr61ruuvIXEq6ChXGr1";
-                            if (x < 100) {
-                                document.getElementById("displayPic").src = gateOpenPic;
-                            } else {
-                                document.getElementById("displayPic").src = gateClosedPic;
+                // OPEN GATE 
+                openBtn.onclick = function () {
+                    //var ultra = getTestValue(); // GET VALUE FROM TEXT FIELD
+                    //var ultra = document.getElementById("ultra_value").value;
+                    console.log("Ultra : " + ultra);
+                    var gateActivation = true;
+                    var gateOpen = true;
+                    var totalTime = 0;
+                    var promptInput = 0;
+                    // WHEN GATE OPEN BTN IS PRESSED
+                    // GATE OPEN
+                    gateOpen == true;
+                    alert("Gate Open");
+                    updateFirebaseControl(1);
+                    startTimer();
+                    gateImg(ultra);
+                    while (ultra < 100) {                       //WHEN THE CAR STILL UNDER THE BARRIER / HAVENT LEAVE YET
+                        gateOpen == true;
+                        console.log("gate still opening");
+                        endTimer();
+                        totalTime += timeElapsed();
+                        if (totalTime >= 15) {
+                            var openBuzzer = {                  //BUZZER ALARM
+                                buzzer: '0',                    //OFF BUZZER FIRST
+                                relay: '1'                     //TURN ON RED LED
                             }
+                            database.ref('PI_04_CONTROL').update(openBuzzer);
+                            alert("Car still under the barrier");
                         }
+                        if (ultra > 99) {                     // WHEN CAR LEAVE, EXIT LOOP
+                            break;
+                        }
+                        //promptInput = prompt("Next value", 0);
+                        //ultra = promptInput;
+                    }
 
-                        //gate control
-                        //var time = new TimeCapture();
-                        var cardVerification = true;
-                        var gateOpen = true;
-                        var totalTime = 0;
+                    // AUTO GATE CLOSE / CAR LEAVE
+                    totalTime = 0;
+                    startTimer();
+                    do {
+                        endTimer();
+                        totalTime += timeElapsed();
+                    } while (totalTime < 4);                     // GATE CLOSE AFTER 3 SECONDS
+                    gateImg(ultra);
+                    alert("Gate Closed");
+                    gateOpen == false;
+                    console.log("gate closed");
+                    updateFirebaseControl(0);
+                }
 
-                        while (cardVerification == true) {                  //if the driver's card is verified
-                            gateOpen == true;                               //open the gate
-                            //if (ultra < 100) {                              //car detected
-                            //time.start();
-                            startTimer();
-                            while (ultra < 100) {                       //while the car still under the barrier
-                                gateImg(ultra);
-                                gateOpen == true;
-                                console.log("gate still opening");
-                                //time.check();
-                                endTimer();
-                                totalTime += timeElapsed();
-                                if (totalTime >= 10) {
-                                    //buzzer alarm
-                                }
-                                if (ultra > 99) {
-                                    break;
-                                }
-                            }
-
-                            //if (ultra > 99) {                           //when the car pass through the barrier / leave
-                            totalTime = 0;
-                            startTimer();
-                            do {
-                                endTimer();
-                                totalTime += timeElapsed();
-                            } while (totalTime < 4);                     // gate close after 3 seconds
-                            gateImg(ultra);
-                            gateOpen == false;
-                            console.log("gate closed")
-                            //}
-                            //}
-
+                // CLOSE GATE
+                closeBtn.onclick = function () {
+                    while (ultra < 100) {                      // IF CAR / OTHER OBSTACLE DETECTED UNDER THE BARRIER, GATE REMAIN OPEN UNTIL IT LEAVE
+                        alert("OBSTACLE DETECTED!");
+                        gateOpen == true;
+                        gateImg(ultra);
+                        updateFirebaseControl(1);
+                        if (ultra > 99) {
+                            break;
                         }
                     }
+                    gateOpen == false;
+                    gateImg(ultra);
+                    alert("Gate Closed");
+                    updateFirebaseControl(0);
                 }
             });
         });
-        */
-        /*
-        database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
-            snapshot.forEach(function (childSnapshot) {
-                var ultra = childSnapshot.val().ultra;
-                document.getElementById("datetime").textContent = 'Date/Time: ' + today;
-                console.log("Ultrasonic: " + ultra);
-                document.getElementById("ultra_value").textContent = 'Distance: ' + ultra + 'cm';
 
-
-            });
-        });
-        */
-        // window.addEventListener('DOMContentLoaded', (event) => {
-        //  window.onload = function () {
-        //   document.onload = function () {
         function getTestValue() {
             //var ultra = document.getElementById("test_ultra_value").value;
             var getultra = document.getElementById("testForm").elements.namedItem("ultraValue").value;
@@ -164,7 +168,7 @@
             document.getElementById("ultra_value").textContent = "Distance : " + getultra;
             return getultra;
         }
-        // test save
+
         function gateImg(x) {
             var gateOpenPic = "https://drive.google.com/uc?id=1kFm-y5v5hUisjtxHIFta4cSM2KS3Wg1m";
             var gateClosedPic = "https://drive.google.com/uc?id=1DTJn9k77316HcZr61ruuvIXEq6ChXGr1";
@@ -173,10 +177,6 @@
             } else {
                 document.getElementById("displayPic").src = gateClosedPic;
             }
-        }
-
-        function promptInput() {
-            var input = prompt("Next value: ", "0");
         }
 
         function updateFirebaseControl(input) {
@@ -196,76 +196,7 @@
                 database.ref('PI_04_CONTROL').update(data);
             }
         }
-
-        function gateActivate(x) {
-            var ultra = getTestValue();
-            //var ultra = document.getElementById("ultra_value").value;
-            console.log("Ultra : " + ultra);
-            var gateActivation = x;
-            var gateOpen = true;
-            var totalTime = 0;
-            var promptInput = 0;
-
-            if (gateActivate == true) {                         // WHEN GATE OPEN BTN IS PRESSED
-                while (gateActivation == true) {                  
-                    // GATE OPEN
-                    gateOpen == true;
-                    alert("Gate Open");
-                    updateFirebaseControl(1);
-                    startTimer();
-                    gateImg(ultra);
-                    while (ultra < 100) {                       //WHEN THE CAR STILL UNDER THE BARRIER / HAVENT LEAVE YET
-                        gateOpen == true;
-                        console.log("gate still opening");
-                        endTimer();
-                        totalTime += timeElapsed();
-                        if (totalTime >= 15) {
-                            var openBuzzer = {                  //BUZZER ALARM
-                                buzzer: '1',
-                                relay: '1'                     //TURN ON RED LED
-                            }
-                            database.ref('PI_04_CONTROL').update(openBuzzer);
-                            alert("Car still under the barrier");
-                        }
-                        if (ultra > 99) {
-                            break;
-                        }
-                        promptInput = prompt("Next value", 0);
-                        ultra = promptInput;
-                    }
-
-                    // GATE CLOSE / CAR LEAVE
-                    //if (ultra > 99) {
-                    totalTime = 0;
-                    startTimer();
-                    do {
-                        endTimer();
-                        totalTime += timeElapsed();
-                    } while (totalTime < 4);                     // GATE CLOSE AFTER 3 SECONDS
-                    gateImg(ultra);
-                    alert("Gate Closed");
-                    gateOpen == false;
-                    console.log("gate closed");
-                    updateFirebaseControl(0);
-                    break;
-
-                }
-            } else {                                        // WHEN GATE CLOSE BTN IS PRESSED
-                while (ultra < 100) {                      // IF CAR / OTHER OBSTACLE DETECTED UNDER THE BARRIER, GATE REMAIN OPEN UNTIL IT LEAVE
-                    alert("OBSTACLE DETECTED!");
-                    gateOpen == true;
-                    gateImg(ultra);
-                    updateFirebaseControl(1);
-                    if (ultra > 99) {
-                        break;
-                    }
-                }
-                gateOpen == false;
-                gateImg(ultra);
-                alert("Gate Closed");
-                updateFirebaseControl(0);
-            }
-        }
     </script>
 </body>
+
 </html>
