@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-database.js"></script>
+
+  <!--<script src="functions.js"></script> -->
+
+</head>
+<style>
+
+  body {
+    background-image: url('https://drive.google.com/uc?id=1I89070vaY31trIiWWmiB20LYo9SQyyGP');
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+
+<body>
+
+
+  <div class="w3-container w3-center w3-animate-top">
+    <h1> <b> Sound Automation </b></h1>
+
+    <p id="demo"></p>
+
+    <script>
+
+      var d = new Date();
+      document.getElementById("demo").innerHTML = d;
+    </script>
+    <br>
+    <br>
+
+    <div class="sound">
+      <p id='currentSound'> Current Sound: </p>
+
+
+    </div>
+
+    <br>
+    <br>
+
+
+
+    <style>
+
+      .sound {
+
+        left: 150px;
+        top: 200px;
+        padding-left: 40px;
+        padding-right: 40px;
+        border: 3px solid #f3f5f3;
+        background-color:#A9A9A9;
+        color: white;
+      }
+    </style>
+
+    <script>
+      var IOTfirebaseConfig = {
+        apiKey: "AIzaSyDqVTZhCodlKPrB7Y2QcSvBhXpMv1H-WCQ",
+        authDomain: "bait2123-202010-04.firebaseapp.com",
+        databaseURL: "https://bait2123-202010-04.firebaseio.com",
+        projectId: "bait2123-202010-04",
+        storageBucket: "bait2123-202010-04.appspot.com",
+        messagingSenderId: "441104878168",
+        appId: "1:441104878168:web:88d5673f47addd348c982d"
+      };
+
+
+      // Initialize Firebase
+      firebase.initializeApp(IOTfirebaseConfig);
+      firebase.analytics();
+      console.log(firebase);
+      
+      // Get a reference to the database service
+      var database = firebase.database();
+
+      //get date and hour of PI
+      var today = new Date();
+      var yyyy = today.getFullYear();
+      var mm = today.getMonth() + 1;
+      var dd = today.getDate();
+      var hour = today.getHours();
+      if (dd < 10) {
+        dd = '0' + dd;
+      }
+      if (mm < 10) {
+        mm = '0' + mm;
+      }
+      if (hour < 10) {
+        hour = '0' + hour;
+      }
+      console.log(yyyy, mm, dd, hour);
+      console.log(today);
+
+      database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
+        snapshot.forEach(function (childSnapshot) {
+          var sound = childSnapshot.val().sound;
+          document.getElementById("currentSound").textContent = "Current Sound :  " + sound + " " ;
+
+        database.ref('PI_04_CONTROL').update(openOLED);
+
+          function c_Sound(){
+            alert ("Buzzer rings to alert");
+            var data = {
+                    led: "1",
+                    buzzer: "0",
+                    lcd: "1",
+                    lcdtxt: "    =Error=   ",
+                    relay1: "1",
+                    relay2: "0"
+                }
+                //update PI CONTROL
+                database.ref('PI_04_CONTROL').update(data);
+          }
+
+          function f_Sound(){
+            alert ("Today is fine");
+            var data = {
+                    led: "1",
+                    buzzer: "0",
+                    lcd: "1",
+                    lcdtxt: "    =Normal=    ",
+                    relay1: "0",
+                    relay2: "1"
+                }
+                //update PI CONTROL
+                database.ref('PI_04_CONTROL').update(data);
+          }
+
+          if (sound > 400){
+            window.onload= c_Sound();
+          }
+
+          else{
+            window.onload= f_Sound();
+         }
+
+        });
+      });
+
+    </script>
+
+</div>
+
+</body>
+
+</html>
