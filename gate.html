@@ -10,18 +10,19 @@
     <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-database.js"></script>
-
-
 </head>
 
 <body>
+    <script src="header.js"></script>
     <p id="datetime">Date/ Time: </p>
     <img id="displayPic" src="https://drive.google.com/uc?id=1DTJn9k77316HcZr61ruuvIXEq6ChXGr1" />
+    <!--
     <form id="testForm" action="#">
         <input type="text" id="test_ultra_value" name="ultraValue" value=0 />
         <input type="submit" value="Submit" />
     </form>
     <button onclick="getTestValue()">Display Value</button>
+        -->
     <button id="openBtn">Open</button>
     <button id="closeBtn">Close</button>
     <p id="ultra_value" style="font-size:50px">Distance: </p>
@@ -43,14 +44,20 @@
         // Get a reference to the database service
         var database = firebase.database();
 
-        //displayLOGO
-        var openOLED = {
+        var starting = {
+            buzzer: "0",
+            camera: "0",
+            lcdbkB: "5",
+            lcdbkG: "5",
+            lcdbkR: "5",
+            lcdscr: "1",
+            lcdtxt: "= FARMING IoT  =",
+            ledlgt: "1",
             oledsc: "1",
-            relay1: "1",
-            relay2: "0",
-            lcdtxt: "=  TRYING  ="
+            relay1: "0",
+            relay2: "0"
         }
-        database.ref('PI_04_CONTROL').update(openOLED);
+        //database.ref('PI_04_CONTROL').update(starting);
 
         //GET CURRENT DATE TIME 
         var today = new Date();
@@ -87,7 +94,7 @@
 
         database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
-                var ultra = childSnapshot.val().ultra;          // GET ULTRASONIC VALUE
+                var ultra = childSnapshot.val().rand2;          // GET ULTRASONIC VALUE
                 document.getElementById("datetime").textContent = 'Date/Time: ' + today;
                 console.log("Ultrasonic: " + ultra);
                 document.getElementById("ultra_value").textContent = 'Distance: ' + ultra + 'cm';
@@ -104,30 +111,28 @@
                     // WHEN GATE OPEN BTN IS PRESSED
                     // GATE OPEN
                     gateOpen == true;
+                    gateImg(gateOpen);
                     alert("Gate Open");
-                    updateFirebaseControl(1);
+                    //updateFirebaseControl(1);
                     startTimer();
-                    gateImg(ultra);
-                    while (ultra < 100) {                       //WHEN THE CAR STILL UNDER THE BARRIER / HAVENT LEAVE YET
+                    while (ultra <= 200) {                       //WHEN THE CAR STILL UNDER THE BARRIER / HAVENT LEAVE YET
                         gateOpen == true;
+                        gateImg(gateOpen);
                         console.log("gate still opening");
                         endTimer();
                         totalTime += timeElapsed();
                         if (totalTime >= 15) {
                             var openBuzzer = {                  //BUZZER ALARM
-                                buzzer: '0',                    //OFF BUZZER FIRST
-                                relay: '1'                     //TURN ON RED LED
+                                buzzer: '1',                    //OFF BUZZER FIRST
+                                relay2: '1'                     //TURN ON RED LED
                             }
-                            database.ref('PI_04_CONTROL').update(openBuzzer);
+                            //database.ref('PI_04_CONTROL').update(openBuzzer);
                             alert("Car still under the barrier");
                         }
-                        if (ultra > 99) {                     // WHEN CAR LEAVE, EXIT LOOP
+                        if (ultra > 200) {                     // WHEN CAR LEAVE, EXIT LOOP
                             break;
                         }
-                        //promptInput = prompt("Next value", 0);
-                        //ultra = promptInput;
                     }
-
                     // AUTO GATE CLOSE / CAR LEAVE
                     totalTime = 0;
                     startTimer();
@@ -135,28 +140,28 @@
                         endTimer();
                         totalTime += timeElapsed();
                     } while (totalTime < 4);                     // GATE CLOSE AFTER 3 SECONDS
-                    gateImg(ultra);
                     alert("Gate Closed");
                     gateOpen == false;
+                    gateImg(gateOpen);
                     console.log("gate closed");
-                    updateFirebaseControl(0);
+                    //updateFirebaseControl(0);
                 }
 
                 // CLOSE GATE
                 closeBtn.onclick = function () {
-                    while (ultra < 100) {                      // IF CAR / OTHER OBSTACLE DETECTED UNDER THE BARRIER, GATE REMAIN OPEN UNTIL IT LEAVE
+                    while (ultra <= 200) {                      // IF CAR / OTHER OBSTACLE DETECTED UNDER THE BARRIER, GATE REMAIN OPEN UNTIL IT LEAVE
                         alert("OBSTACLE DETECTED!");
                         gateOpen == true;
-                        gateImg(ultra);
-                        updateFirebaseControl(1);
-                        if (ultra > 99) {
+                        gateImg(gateOpen);
+                        //updateFirebaseControl(1);
+                        if (ultra > 200) {
                             break;
                         }
                     }
                     gateOpen == false;
-                    gateImg(ultra);
+                    gateImg(gateOpen);
                     alert("Gate Closed");
-                    updateFirebaseControl(0);
+                    //updateFirebaseControl(0);
                 }
             });
         });
@@ -172,9 +177,9 @@
         function gateImg(x) {
             var gateOpenPic = "https://drive.google.com/uc?id=1kFm-y5v5hUisjtxHIFta4cSM2KS3Wg1m";
             var gateClosedPic = "https://drive.google.com/uc?id=1DTJn9k77316HcZr61ruuvIXEq6ChXGr1";
-            if (x < 100) {
+            if (x == true) {
                 document.getElementById("displayPic").src = gateOpenPic;
-            } else {
+            } else if (x == false) {
                 document.getElementById("displayPic").src = gateClosedPic;
             }
         }
@@ -182,16 +187,18 @@
         function updateFirebaseControl(input) {
             if (input == 1) {
                 var data = {
-                    led: "1",
-                    lcd: "1",
-                    lcdtxt: "= GATE OPENING ="
+                    ledlgt: "1",
+                    lcdscr: "1",
+                    lcdtxt: "= GATE OPENING =",
+                    relay2: "0"
                 }
                 database.ref('PI_04_CONTROL').update(data);
             } else if (input == 0) {
                 var data = {
-                    led: "1",
-                    lcd: "1",
-                    lcdtxt: "= GATE  CLOSED ="
+                    ledlgt: "1",
+                    lcdscr: "1",
+                    lcdtxt: "= GATE  CLOSED =",
+                    relay2: "1"
                 }
                 database.ref('PI_04_CONTROL').update(data);
             }
