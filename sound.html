@@ -13,10 +13,11 @@
 </head>
 <style>
 
-  body {
+  .design {
     background-image: url('https://drive.google.com/uc?id=1bKiKUrKxQhPsIJyy3B0_mOEBiyZdHlYk');
     background-repeat: no-repeat;
     background-size: cover;
+    height: 500px;
   }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,6 +27,8 @@
 <body>
 
   <script src="header.js"></script>
+  <div class="design">
+
   <div class="heading">
     <!-- <i class="fa fa-volume-up w3-margin-bottom w3-jumbo"></i>  -->
     <h1> <div class="title">Sound Automation</div></h1>
@@ -139,7 +142,7 @@
 
       database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
         snapshot.forEach(function (childSnapshot) {
-          var sound = childSnapshot.val().rand2;
+          var sound = childSnapshot.val().sound;
           document.getElementById("currentSound").textContent = "Current Sound :  " + sound + " " ;
 
 
@@ -175,21 +178,20 @@
                 // database.ref('PI_04_CONTROL').update(data);
           }
 
-          if (sound > 400){
-            window.onload= c_Sound();
-          }
+        //   if (sound > 400){
+        //     window.onload= c_Sound();
+        //   }
 
-          else{
-            window.onload= f_Sound();
-         }
+        //   else{
+        //     window.onload= f_Sound();
+        //  }
 
         });
       });
 
     </script>
-
 </div>
-
+</div>
 </body>
 
 </html>
