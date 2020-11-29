@@ -25,19 +25,26 @@
 
 <body>
 
-
-  <div class="w3-container w3-center w3-animate-top">
-    <h1> <b> Sound Automation </b></h1>
+  <script src="header.js"></script>
+  <div class="heading">
+    <!-- <i class="fa fa-volume-up w3-margin-bottom w3-jumbo"></i>  -->
+    <h1> <div class="title">Sound Automation</div></h1>
 
     <p id="demo"></p>
+  </div>
 
+  <div class="date time">
     <script>
-
+      
       var d = new Date();
       document.getElementById("demo").innerHTML = d;
     </script>
     <br>
     <br>
+
+  </b>
+  </div>
+
 
     <div class="sound">
       <p id='currentSound'> Current Sound: </p>
@@ -52,8 +59,14 @@
 
     <style>
 
-      .sound {
+      .title{
+        color: rgb(247, 245, 245); 
+        letter-spacing: 3px; 
+        text-align: center;
+      }
 
+      .sound {
+        text-align: center;
         left: 150px;
         top: 200px;
         padding-left: 40px;
@@ -62,6 +75,13 @@
         background-color:#A9A9A9;
         color: white;
       }
+
+      #demo {
+        color: blanchedalmond;
+        text-align: center;
+      }
+
+
     </style>
 
     <script>
@@ -102,39 +122,57 @@
       console.log(yyyy, mm, dd, hour);
       console.log(today);
 
+      var starting = {
+            buzzer: "1",
+            camera: "0",
+            lcdbkB: "5",
+            lcdbkG: "5",
+            lcdbkR: "5",
+            lcdscr: "1",
+            lcdtxt: "= FARMING IOT =",
+            ledlgt: "1",
+            oledsc: "1",
+            relay1: "0",
+            relay2: "0"
+        }
+        // database.ref('PI_04_CONTROL').update(starting);
+
       database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
         snapshot.forEach(function (childSnapshot) {
-          var sound = childSnapshot.val().sound;
+          var sound = childSnapshot.val().rand2;
           document.getElementById("currentSound").textContent = "Current Sound :  " + sound + " " ;
 
-        database.ref('PI_04_CONTROL').update(openOLED);
 
           function c_Sound(){
             alert ("Buzzer rings to alert");
             var data = {
                     led: "1",
-                    buzzer: "0",
+                    ledlgt:"1",
+                    buzzer: "1",
                     lcd: "1",
-                    lcdtxt: "    =Error=   ",
+                    lcdscr:"1",
+                    lcdtxt: "  =Error=  ",
                     relay1: "1",
                     relay2: "0"
                 }
                 //update PI CONTROL
-                database.ref('PI_04_CONTROL').update(data);
+                // database.ref('PI_04_CONTROL').update(data);
           }
 
           function f_Sound(){
             alert ("Today is fine");
             var data = {
                     led: "1",
+                    ledlgt:"1",
                     buzzer: "0",
                     lcd: "1",
+                    lcdscr:"1",
                     lcdtxt: "    =Normal=    ",
                     relay1: "0",
                     relay2: "1"
                 }
                 //update PI CONTROL
-                database.ref('PI_04_CONTROL').update(data);
+                // database.ref('PI_04_CONTROL').update(data);
           }
 
           if (sound > 400){
