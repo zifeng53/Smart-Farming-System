@@ -14,19 +14,69 @@
 
 <body>
     <script src="header.js"></script>
-    <p id="datetime">Date/ Time: </p>
-    <img id="displayPic" src="https://drive.google.com/uc?id=1DTJn9k77316HcZr61ruuvIXEq6ChXGr1" />
-    <!--
+    <style>
+        .body-container {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        #datetime {
+            font-size: 22px;
+            font-weight: 500;
+        }
+
+        #ultra_value {
+            font-size: 35px;
+        }
+
+        #openBtn,
+        #closeBtn {
+            font-size: 25px;
+            padding: 10px 15px;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        #openBtn {
+            border: 4px solid #4CAF50;
+        }
+
+        #closeBtn {
+            border: 4px solid red;
+        }
+
+        .section1 {
+            float: left;
+            width: 60%;
+        }
+
+        .section2 {
+            float: right;
+            width: 30%;
+        }
+    </style>
+    <br>
+    <br>
+    <div class="body-container">
+        <div class="section1">
+            <p id="datetime">Date/ Time: </p>
+            <img id="displayPic" src="https://drive.google.com/uc?id=1DTJn9k77316HcZr61ruuvIXEq6ChXGr1" />
+        </div>
+        <!--
     <form id="testForm" action="#">
         <input type="text" id="test_ultra_value" name="ultraValue" value=0 />
         <input type="submit" value="Submit" />
     </form>
     <button onclick="getTestValue()">Display Value</button>
         -->
-    <button id="openBtn">Open</button>
-    <button id="closeBtn">Close</button>
-    <p id="ultra_value" style="font-size:50px">Distance: </p>
-
+        <div class="section2">
+            <p id="ultra_value">Distance: </p>
+            <div class="openCloseBtn">
+                <button id="openBtn">Open</button>
+                <button id="closeBtn">Close</button>
+            </div>
+        </div>
+    </div>
     <script>
         var IOTfirebaseConfig = {
             apiKey: "AIzaSyDqVTZhCodlKPrB7Y2QcSvBhXpMv1H-WCQ",
@@ -97,7 +147,7 @@
                 var ultra = childSnapshot.val().rand2;          // GET ULTRASONIC VALUE
                 document.getElementById("datetime").textContent = 'Date/Time: ' + today;
                 console.log("Ultrasonic: " + ultra);
-                document.getElementById("ultra_value").textContent = 'Distance: ' + ultra + 'cm';
+                document.getElementById("ultra_value").textContent = 'Distance: ' + ultra + ' cm';
 
                 // OPEN GATE 
                 openBtn.onclick = function () {
