@@ -49,23 +49,26 @@
   </head>
 
   <body>
+    <script src="header.js"></script>
     <section id="Light Automation">
       <h2 id="titleLightAutomation">Light Automation</h2>
       <div id="p1LightAutomation">
         <p>
           To boost the growth of the plants, it is always recommended to expose
-          them to the lights 24/7, hence, with our automation solution, the lamp
-          pole will automatically light up when the light intensity detected by
-          the sensor is less than...
+          them to the lights 24/7, hence, with our automation solution, the artificial light
+          will automatically light up when the surrounding light intensity detected by
+          the sensor is less than the benchmark below, which indicating that it is night time and 
+          it will swtich off the artificial light when the surrounding light intensity detected by
+          the sensor is more than the benchmark belows indicating that it is day time to preserve energy.
         </p>
-        <p id="p2LightAutomation"><500</p>
+        <p id="p2LightAutomation">Benchmark : 500</p>
         <h4>
           Current Light Intensity Detected:
           <strong id="currentIntensity"></strong>
         </h4>
         <h4>
-          Current Lamp Pole Status:
-          <strong id="currentStatus">Lamp is closed</strong>
+          Current Artificial Light Status:
+          <strong id="currentStatus">Light is closed </strong>
         </h4>
         <button id="buttonLightOn" onclick="lightON()">On Lights</button>
         <button id="buttonLightOff" onclick="lightOFF()">Off Lights</button>
@@ -79,7 +82,8 @@
       </div>
     </section>
     <script>
-      // JavaScript for Light Automation
+      // JavaScript for Light Automation'
+      var benchmark = 500;
       var today = new Date();
       var yyyy = today.getFullYear();
       var mm = today.getMonth() + 1;
@@ -99,10 +103,12 @@
         .limitToLast(1)
         .on("value", function (snapshot) {
           snapshot.forEach(function (childSnapshot) {
-            var light = childSnapshot.val().light;
+            var light = childSnapshot.val().rand2;
             document.getElementById("currentIntensity").textContent = light;
-            if (light < 500) {
+            if (light < benchmark) {
               lightON();
+            } else if (light > benchmark){
+              lightOFF()
             }
           });
         });
@@ -111,7 +117,7 @@
           lcdbkB: "0",
           lcdbkG: "10",
           lcdbkR: "10",
-          lcdtxt: "  Lamp light up ",
+          lcdtxt: "Light switch on ",
           relay1: "0",
         };
         //update PI CONTROL
@@ -123,7 +129,7 @@
           lcdbkB: "0",
           lcdbkG: "10",
           lcdbkR: "10",
-          lcdtxt: " Lamp is closed ",
+          lcdtxt: "Light is closed ",
           relay1: "1",
         };
         //update PI CONTROL
