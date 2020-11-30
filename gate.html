@@ -127,21 +127,6 @@
         console.log(yyyy, mm, dd, hour);
         console.log(today);
 
-        //TIMER
-        function startTimer() {
-            startTime = new Date();
-        };
-        function endTimer() {
-            endTime = new Date();
-            var timeDiff = endTime - startTime;
-            var seconds = Math.round(timeDiff / 1000);
-            console.log(seconds + " seconds");
-            timeElapsed(seconds);
-        };
-        function timeElapsed(sec) {
-            return sec;
-        }
-
         database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
                 var ultra = childSnapshot.val().rand2;          // GET ULTRASONIC VALUE
@@ -151,86 +136,69 @@
 
                 // OPEN GATE 
                 openBtn.onclick = function () {
-                    //var ultra = getTestValue(); // GET VALUE FROM TEXT FIELD
-                    //var ultra = document.getElementById("ultra_value").value;
-                    console.log("Ultra : " + ultra);
-                    var gateActivation = true;
-                    var gateOpen = true;
                     var totalTime = 0;
-                    var promptInput = 0;
                     // WHEN GATE OPEN BTN IS PRESSED
                     // GATE OPEN
-                    gateOpen == true;
-                    gateImg(gateOpen);
+                    gateImg(1);
                     alert("Gate Open");
                     //updateFirebaseControl(1);
-                    startTimer();
-                    while (ultra <= 200) {                       //WHEN THE CAR STILL UNDER THE BARRIER / HAVENT LEAVE YET
-                        gateOpen == true;
-                        gateImg(gateOpen);
-                        console.log("gate still opening");
-                        endTimer();
-                        totalTime += timeElapsed();
-                        if (totalTime >= 15) {
-                            var openBuzzer = {                  //BUZZER ALARM
-                                buzzer: '1',                    //OFF BUZZER FIRST
-                                relay2: '1'                     //TURN ON RED LED
+
+                    database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
+                        snapshot.forEach(function (childSnapshot) {
+                            var ultra = childSnapshot.val().rand2;          // GET ULTRASONIC VALUE
+                            document.getElementById("datetime").textContent = 'Date/Time: ' + today;
+                            console.log("Ultrasonic: " + ultra);
+                            document.getElementById("ultra_value").textContent = 'Distance: ' + ultra + ' cm';
+
+                            if (ultra <= 200) {                       //WHEN THE CAR STILL UNDER THE BARRIER / HAVEN'T LEAVE YET
+                                gateImg(1);
+                                console.log("Gate Opening");
+                            } else {
+                                // GATE CLOSE WHEN CAR LEAVE
+                                setTimeout(function () {
+                                    alert("Vehicle left! Gate Closed");
+                                    gateImg(0);
+                                    console.log("Gate Closed");
+                                    //updateFirebaseControl(0);
+                                }, 5000); // 5 seconds
+                                setTimeout(function () {
+                                    window.location.reload(0);
+                                }, 5000); // 5 seconds
                             }
-                            //database.ref('PI_04_CONTROL').update(openBuzzer);
-                            alert("Car still under the barrier");
-                        }
-                        if (ultra > 200) {                     // WHEN CAR LEAVE, EXIT LOOP
-                            break;
-                        }
-                    }
-                    // AUTO GATE CLOSE / CAR LEAVE
-                    totalTime = 0;
-                    startTimer();
-                    do {
-                        endTimer();
-                        totalTime += timeElapsed();
-                    } while (totalTime < 4);                     // GATE CLOSE AFTER 3 SECONDS
-                    alert("Gate Closed");
-                    gateOpen == false;
-                    gateImg(gateOpen);
-                    console.log("gate closed");
-                    //updateFirebaseControl(0);
+                        });
+                    });
                 }
 
                 // CLOSE GATE
                 closeBtn.onclick = function () {
-                    while (ultra <= 200) {                      // IF CAR / OTHER OBSTACLE DETECTED UNDER THE BARRIER, GATE REMAIN OPEN UNTIL IT LEAVE
-                        alert("OBSTACLE DETECTED!");
-                        gateOpen == true;
-                        gateImg(gateOpen);
-                        //updateFirebaseControl(1);
-                        if (ultra > 200) {
-                            break;
+                    var gateOpen = true;
+                    if (ultra <= 200) {                      // IF CAR DETECTED UNDER THE BARRIER, GATE REMAIN OPEN UNTIL IT LEAVE
+                        alert("VEHICLE DETECTED!");
+                        var buzzerSound = {
+                            buzzer: "1",
+                            relay2: "1"
                         }
+                        //database.ref('PI_04_CONTROL').update(buzzerSound);
+                        gateImg(1);
+                        //updateFirebaseControl(1);
+                    } else {
+                        gateImg(0);
+                        alert("Gate Closed");
+                        //updateFirebaseControl(0);
                     }
-                    gateOpen == false;
-                    gateImg(gateOpen);
-                    alert("Gate Closed");
-                    //updateFirebaseControl(0);
                 }
             });
         });
-        //
-        function getTestValue() {
-            //var ultra = document.getElementById("test_ultra_value").value;
-            var getultra = document.getElementById("testForm").elements.namedItem("ultraValue").value;
-            console.log("Test value : " + getultra);
-            document.getElementById("ultra_value").textContent = "Distance : " + getultra;
-            return getultra;
-        }
 
         function gateImg(x) {
             var gateOpenPic = "https://drive.google.com/uc?id=1kFm-y5v5hUisjtxHIFta4cSM2KS3Wg1m";
             var gateClosedPic = "https://drive.google.com/uc?id=1DTJn9k77316HcZr61ruuvIXEq6ChXGr1";
-            if (x == true) {
+            if (x == 1) {
                 document.getElementById("displayPic").src = gateOpenPic;
-            } else if (x == false) {
+                console.log("Display OPEN");
+            } else if (x == 0) {
                 document.getElementById("displayPic").src = gateClosedPic;
+                console.log("Display CLOSED");
             }
         }
 
