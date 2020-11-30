@@ -79,5 +79,4 @@ nav a:hover:before {
     </div>
 </header>
 <hr />
-<br />
 `);

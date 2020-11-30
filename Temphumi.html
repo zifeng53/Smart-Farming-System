@@ -1,0 +1,213 @@
+<htmL>
+<!--<div class="w3-container w3-light-grey" style="padding:128px 16px">-->
+
+<head>
+  <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-database.js"></script>
+
+  <!--<script src="functions.js"></script> -->
+
+</head>
+<style>
+  .body-container {
+    background-image: url('https://drive.google.com/uc?id=1fGTCmnjJi9qb7R_e_Z3A_CiyXJsLhFzV');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    height:600px;
+  }
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+
+<body>
+  <script src="header.js"></script>
+
+  <div class="body-container">
+    <div class="w3-container w3-center w3-animate-top">
+      <h1> <b>Temperature and Humidity </b></h1>
+
+      <p id="demo"></p>
+
+      <script>
+
+        var d = new Date();
+        document.getElementById("demo").innerHTML = d;
+      </script>
+      <br>
+      <br>
+
+      <div class="temp">
+        <p id='currentTemp'> Current Temperature : </p>
+
+
+      </div>
+      <br>
+      <br>
+
+      <div class="humi">
+        <p id='currentHumidity'> Current Humidity : </p>
+
+      </div>
+      <br>
+      <br>
+
+
+
+      <style>
+        .temp {
+
+          left: 150px;
+          top: 200px;
+          padding-left: 40px;
+          padding-right: 40px;
+          border: 3px solid #4CAF50;
+          background-color: black;
+          color: white;
+        }
+
+        .humi {
+
+          left: 150px;
+          top: 200px;
+          padding-left: 40px;
+          padding-right: 40px;
+          border: 3px solid #4CAF50;
+          background-color: black;
+          color: white;
+        }
+      </style>
+
+      <script>
+        var IOTfirebaseConfig = {
+          apiKey: "AIzaSyDqVTZhCodlKPrB7Y2QcSvBhXpMv1H-WCQ",
+          authDomain: "bait2123-202010-04.firebaseapp.com",
+          databaseURL: "https://bait2123-202010-04.firebaseio.com",
+          projectId: "bait2123-202010-04",
+          storageBucket: "bait2123-202010-04.appspot.com",
+          messagingSenderId: "441104878168",
+          appId: "1:441104878168:web:88d5673f47addd348c982d"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(IOTfirebaseConfig);
+        firebase.analytics();
+        console.log(firebase);
+        // Get a reference to the database service
+        var database = firebase.database();
+
+        var starting = {
+          buzzer: "0",
+          camera: "0",
+          lcdbkB: "5",
+          lcdbkG: "5",
+          lcdbkR: "5",
+          lcdscr: "1",
+          lcdtxt: "= FARMING IOT1 =",
+          ledlgt: "1",
+          oledsc: "1",
+          relay1: "0",
+          relay2: "0"
+        }
+        // database.ref('PI_04_CONTROL').update(starting);
+        //get date and hour of PI
+        var today = new Date();
+        var yyyy = today.getFullYear();
+        var mm = today.getMonth() + 1;
+        var dd = today.getDate();
+        var hour = today.getHours();
+        if (dd < 10) {
+          dd = '0' + dd;
+        }
+        if (mm < 10) {
+          mm = '0' + mm;
+        }
+        if (hour < 10) {
+          hour = '0' + hour;
+        }
+        console.log(yyyy, mm, dd, hour);
+        console.log(today);
+        //get temperature & humidity  value
+
+
+        database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
+          snapshot.forEach(function (childSnapshot) {
+            var tempe = childSnapshot.val().tempe;
+            document.getElementById("currentTemp").textContent = "Current Temperature : " + tempe + " " + "°C";
+            console.log("Temperature: " + tempe);
+
+
+
+
+            database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
+              snapshot.forEach(function (childSnapshot) {
+                var humid = childSnapshot.val().humid;
+                document.getElementById("currentHumidity").textContent = "Current Humidity :  " + humid + " " + "%";
+                console.log("Humidity: " + humid);
+
+
+
+                function temp() {
+                  //  confirm("The temperature is HIGH")
+                }
+
+                function temp2() {
+                  // confirm( "NO NEED BITCH")
+
+                }
+
+                if (tempe < 5 && humid < 5) {
+                  window.onload = temp();
+                  var data = {
+                    led: "0",
+                    buzzer: "0",
+                    lcd: "0",
+                    lcdtxt: "WATER MACHINE OK",
+                    relay2: "1",
+                    relay1: "1",
+                    lcdbkB: "0",
+                    lcdbkG: "10",
+                    lcdbkR: "10"
+
+                  }
+                  //update PI CONTROL
+                  // database.ref('PI_04_CONTROL').update(data);
+                }
+                else {
+                  window.onload = temp2();
+                  var data = {
+                    led: "0",
+                    buzzer: "0",
+                    lcd: "0",
+                    lcdtxt: "IDK",
+                    relay: "0",
+                    lcdbkB: "10",
+                    lcdbkG: "0",
+                    lcdbkR: "10"
+
+                  }
+                  //update PI CONTROL
+                  //  database.ref('PI_04_CONTROL').update(data);
+                }
+
+              });
+            });
+          });
+        });
+      </script>
+
+      <!--<div class="humi">
+          <p id="demo"> Current What to Do : </p> -->
+
+
+    </div>
+
+  </div>
+  </div>
+  </div>
+</body>
+
+</htmL>
