@@ -72,7 +72,7 @@ nav a:hover:before {
                 <li><a href="index.html">Home</a></li>
                 <li><a href="Light.html">Light Automation</a></li>
                 <li><a href=".html">Watering System</a></li>
-                <li><a href="gate.html">Gate</a></li>
+                <li><a href="gate.html">Gate Control</a></li>
                 <li><a href="sound.html">Sound</a></li>
             </ul>
         </nav>
