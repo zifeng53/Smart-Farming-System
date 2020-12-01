@@ -72,14 +72,23 @@
         </div>
     </div>
     <script>
+        // var IOTfirebaseConfig = {
+        //     apiKey: "AIzaSyDqVTZhCodlKPrB7Y2QcSvBhXpMv1H-WCQ",
+        //     authDomain: "bait2123-202010-04.firebaseapp.com",
+        //     databaseURL: "https://bait2123-202010-04.firebaseio.com",
+        //     projectId: "bait2123-202010-04",
+        //     storageBucket: "bait2123-202010-04.appspot.com",
+        //     messagingSenderId: "441104878168",
+        //     appId: "1:441104878168:web:88d5673f47addd348c982d"
+        // };
         var IOTfirebaseConfig = {
-            apiKey: "AIzaSyDqVTZhCodlKPrB7Y2QcSvBhXpMv1H-WCQ",
-            authDomain: "bait2123-202010-04.firebaseapp.com",
-            databaseURL: "https://bait2123-202010-04.firebaseio.com",
-            projectId: "bait2123-202010-04",
-            storageBucket: "bait2123-202010-04.appspot.com",
-            messagingSenderId: "441104878168",
-            appId: "1:441104878168:web:88d5673f47addd348c982d"
+            apiKey: "AIzaSyC8dkLaUI2DRBZDXBbBVx0duJnIrqm-iMs",
+            authDomain: "bait2123-202010-05.firebaseapp.com",
+            databaseURL: "https://bait2123-202010-05.firebaseio.com",
+            projectId: "bait2123-202010-05",
+            storageBucket: "bait2123-202010-05.appspot.com",
+            messagingSenderId: "885894113414",
+            appId: "1:885894113414:web:a5124634dc76b5bfe2c907"
         };
         // Initialize Firebase
         firebase.initializeApp(IOTfirebaseConfig);
@@ -106,12 +115,11 @@
             lcdbkR: "5",
             lcdscr: "1",
             lcdtxt: "= FARMING IoT  =",
-            ledlgt: "1",
-            oledsc: "1",
+            oledsc: "0",
             relay1: "0",
             relay2: "0"
         }
-        //database.ref('PI_04_CONTROL').update(starting);
+        database.ref('PI_05_CONTROL').update(starting);
 
         //GET CURRENT DATE TIME 
         var today = new Date();
@@ -132,9 +140,10 @@
         console.log(today);
         gateImg(0);
 
-        database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
+        database.ref('/PI_05_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
-                var ultra = childSnapshot.val().rand2;          // GET ULTRASONIC VALUE
+                console.log(snapshot.val());
+                var ultra = childSnapshot.val().ultra;          // GET ULTRASONIC VALUE
                 document.getElementById("datetime").textContent = 'Date/Time: ' + today;
                 console.log("Ultrasonic: " + ultra);
                 document.getElementById("ultra_value").textContent = 'Distance: ' + ultra + ' cm';
@@ -145,7 +154,7 @@
                     // GATE OPEN
                     gateImg(1);
                     alert("Gate Open");
-                    //updateFirebaseControl(1);
+                    updateFirebaseControl(1);
 
                     gateControl();
                 }
@@ -159,24 +168,24 @@
                             buzzer: "1",
                             relay2: "1"
                         }
-                        //database.ref('PI_04_CONTROL').update(buzzerSound);
+                        database.ref('PI_05_CONTROL').update(buzzerSound);
                         gateImg(1);
-                        //updateFirebaseControl(1);
+                        updateFirebaseControl(1);
                         gateControl();
                     } else {
                         gateImg(0);
                         alert("Gate Closed");
                         console.log("Gate Closed");
-                        //updateFirebaseControl(0);
+                        updateFirebaseControl(0);
                     }
                 }
             });
         });
 
         function gateControl() {
-            database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
+            database.ref('/PI_05_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
                 snapshot.forEach(function (childSnapshot) {
-                    var ultra = childSnapshot.val().rand2;          // GET ULTRASONIC VALUE
+                    var ultra = childSnapshot.val().ultra;          // GET ULTRASONIC VALUE
 
                     if (ultra <= 200) {                       //WHEN THE CAR STILL UNDER THE BARRIER / HAVEN'T LEAVE YET
                         gateImg(1);
@@ -187,7 +196,7 @@
                             alert("Vehicle left! Gate Closed");
                             gateImg(0);
                             console.log("Gate Closed");
-                            //updateFirebaseControl(0);
+                            updateFirebaseControl(0);
                         }, 3000); // 3 seconds
                         setTimeout(function () {
                             window.location.reload(0);
@@ -210,20 +219,18 @@
         function updateFirebaseControl(input) {
             if (input == 1) {
                 var data = {
-                    ledlgt: "1",
                     lcdscr: "1",
                     lcdtxt: "= GATE OPENING =",
                     relay2: "0"
                 }
-                database.ref('PI_04_CONTROL').update(data);
+                database.ref('PI_05_CONTROL').update(data);
             } else if (input == 0) {
                 var data = {
-                    ledlgt: "1",
                     lcdscr: "1",
                     lcdtxt: "= GATE  CLOSED =",
                     relay2: "1"
                 }
-                database.ref('PI_04_CONTROL').update(data);
+                database.ref('PI_05_CONTROL').update(data);
             }
         }
     </script>
