@@ -72,24 +72,24 @@
         </div>
     </div>
     <script>
-        // var IOTfirebaseConfig = {
-        //     apiKey: "AIzaSyDqVTZhCodlKPrB7Y2QcSvBhXpMv1H-WCQ",
-        //     authDomain: "bait2123-202010-04.firebaseapp.com",
-        //     databaseURL: "https://bait2123-202010-04.firebaseio.com",
-        //     projectId: "bait2123-202010-04",
-        //     storageBucket: "bait2123-202010-04.appspot.com",
-        //     messagingSenderId: "441104878168",
-        //     appId: "1:441104878168:web:88d5673f47addd348c982d"
-        // };
         var IOTfirebaseConfig = {
-            apiKey: "AIzaSyC8dkLaUI2DRBZDXBbBVx0duJnIrqm-iMs",
-            authDomain: "bait2123-202010-05.firebaseapp.com",
-            databaseURL: "https://bait2123-202010-05.firebaseio.com",
-            projectId: "bait2123-202010-05",
-            storageBucket: "bait2123-202010-05.appspot.com",
-            messagingSenderId: "885894113414",
-            appId: "1:885894113414:web:a5124634dc76b5bfe2c907"
+            apiKey: "AIzaSyDqVTZhCodlKPrB7Y2QcSvBhXpMv1H-WCQ",
+            authDomain: "bait2123-202010-04.firebaseapp.com",
+            databaseURL: "https://bait2123-202010-04.firebaseio.com",
+            projectId: "bait2123-202010-04",
+            storageBucket: "bait2123-202010-04.appspot.com",
+            messagingSenderId: "441104878168",
+            appId: "1:441104878168:web:88d5673f47addd348c982d"
         };
+        // var IOTfirebaseConfig = {
+        //     apiKey: "AIzaSyC8dkLaUI2DRBZDXBbBVx0duJnIrqm-iMs",
+        //     authDomain: "bait2123-202010-05.firebaseapp.com",
+        //     databaseURL: "https://bait2123-202010-05.firebaseio.com",
+        //     projectId: "bait2123-202010-05",
+        //     storageBucket: "bait2123-202010-05.appspot.com",
+        //     messagingSenderId: "885894113414",
+        //     appId: "1:885894113414:web:a5124634dc76b5bfe2c907"
+        // };
         // Initialize Firebase
         firebase.initializeApp(IOTfirebaseConfig);
         firebase.analytics();
@@ -119,7 +119,7 @@
             relay1: "0",
             relay2: "0"
         }
-        database.ref('PI_05_CONTROL').update(starting);
+        database.ref('PI_04_CONTROL').update(starting);
 
         //GET CURRENT DATE TIME 
         var today = new Date();
@@ -140,10 +140,10 @@
         console.log(today);
         gateImg(0);
 
-        database.ref('/PI_05_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
+        database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
                 console.log(snapshot.val());
-                var ultra = childSnapshot.val().ultra;          // GET ULTRASONIC VALUE
+                var ultra = childSnapshot.val().rand2;          // GET ULTRASONIC VALUE
                 document.getElementById("datetime").textContent = 'Date/Time: ' + today;
                 console.log("Ultrasonic: " + ultra);
                 document.getElementById("ultra_value").textContent = 'Distance: ' + ultra + ' cm';
@@ -155,20 +155,20 @@
                     gateImg(1);
                     alert("Gate Open");
                     updateFirebaseControl(1);
-
-                    gateControl();
+                    setTimeout(function () {
+                        gateControl();
+                    }, 5000); // 5 seconds
                 }
 
                 // CLOSE GATE
                 closeBtn.onclick = function () {
-                    var gateOpen = true;
                     if (ultra <= 200) {                      // IF CAR DETECTED UNDER THE BARRIER, GATE REMAIN OPEN UNTIL IT LEAVE
                         alert("VEHICLE DETECTED!");
                         var buzzerSound = {
                             buzzer: "1",
                             relay2: "1"
                         }
-                        database.ref('PI_05_CONTROL').update(buzzerSound);
+                        database.ref('PI_04_CONTROL').update(buzzerSound);
                         gateImg(1);
                         updateFirebaseControl(1);
                         gateControl();
@@ -183,9 +183,9 @@
         });
 
         function gateControl() {
-            database.ref('/PI_05_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
+            database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
                 snapshot.forEach(function (childSnapshot) {
-                    var ultra = childSnapshot.val().ultra;          // GET ULTRASONIC VALUE
+                    var ultra = childSnapshot.val().rand2;          // GET ULTRASONIC VALUE
 
                     if (ultra <= 200) {                       //WHEN THE CAR STILL UNDER THE BARRIER / HAVEN'T LEAVE YET
                         gateImg(1);
@@ -223,14 +223,14 @@
                     lcdtxt: "= GATE OPENING =",
                     relay2: "0"
                 }
-                database.ref('PI_05_CONTROL').update(data);
+                database.ref('PI_04_CONTROL').update(data);
             } else if (input == 0) {
                 var data = {
                     lcdscr: "1",
                     lcdtxt: "= GATE  CLOSED =",
                     relay2: "1"
                 }
-                database.ref('PI_05_CONTROL').update(data);
+                database.ref('PI_04_CONTROL').update(data);
             }
         }
     </script>
