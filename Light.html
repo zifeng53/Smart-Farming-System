@@ -30,14 +30,24 @@
     <script>
       // Your web app's Firebase configuration
       // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+      // var IOTfirebaseConfig = {
+      //   apiKey: "AIzaSyDqVTZhCodlKPrB7Y2QcSvBhXpMv1H-WCQ",
+      //   authDomain: "bait2123-202010-04.firebaseapp.com",
+      //   databaseURL: "https://bait2123-202010-04.firebaseio.com",
+      //   projectId: "bait2123-202010-04",
+      //   storageBucket: "bait2123-202010-04.appspot.com",
+      //   messagingSenderId: "441104878168",
+      //   appId: "1:441104878168:web:88d5673f47addd348c982d",
+      // };
       var IOTfirebaseConfig = {
-        apiKey: "AIzaSyDqVTZhCodlKPrB7Y2QcSvBhXpMv1H-WCQ",
-        authDomain: "bait2123-202010-04.firebaseapp.com",
-        databaseURL: "https://bait2123-202010-04.firebaseio.com",
-        projectId: "bait2123-202010-04",
-        storageBucket: "bait2123-202010-04.appspot.com",
-        messagingSenderId: "441104878168",
-        appId: "1:441104878168:web:88d5673f47addd348c982d",
+        apiKey: "AIzaSyC8dkLaUI2DRBZDXBbBVx0duJnIrqm-iMs",
+        authDomain: "bait2123-202010-05.firebaseapp.com",
+        databaseURL: "https://bait2123-202010-05.firebaseio.com",
+        projectId: "bait2123-202010-05",
+        storageBucket: "bait2123-202010-05.appspot.com",
+        messagingSenderId: "885894113414",
+        appId: "1:885894113414:web:a5124634dc76b5bfe2c907",
       };
       // Initialize Firebase
       firebase.initializeApp(IOTfirebaseConfig);
@@ -55,11 +65,13 @@
       <div id="p1LightAutomation">
         <p>
           To boost the growth of the plants, it is always recommended to expose
-          them to the lights 24/7, hence, with our automation solution, the artificial light
-          will automatically light up when the surrounding light intensity detected by
-          the sensor is less than the benchmark below, which indicating that it is night time and 
-          it will swtich off the artificial light when the surrounding light intensity detected by
-          the sensor is more than the benchmark belows indicating that it is day time to preserve energy.
+          them to the lights 24/7, hence, with our automation solution, the
+          artificial light will automatically light up when the surrounding
+          light intensity detected by the sensor is less than the benchmark
+          below, which indicating that it is night time and it will swtich off
+          the artificial light when the surrounding light intensity detected by
+          the sensor is more than the benchmark belows indicating that it is day
+          time to preserve energy.
         </p>
         <p id="p2LightAutomation">Benchmark : 500</p>
         <h4>
@@ -99,19 +111,22 @@
         hour = "0" + hour;
       }
       database
-        .ref("/PI_04_" + yyyy + mm + dd + "/" + hour)
+        .ref("/PI_05_" + yyyy + mm + dd + "/" + hour)
         .limitToLast(1)
         .on("value", function (snapshot) {
           snapshot.forEach(function (childSnapshot) {
-            var light = childSnapshot.val().rand2;
+            // database.ref("/PI_001/").on("value", function (snapshot) {
+            //   snapshot.forEach(function (childSnapshot) {
+            var light = childSnapshot.val().light;
             document.getElementById("currentIntensity").textContent = light;
             if (light < benchmark) {
               lightON();
-            } else if (light > benchmark){
-              lightOFF()
+            } else if (light > benchmark) {
+              lightOFF();
             }
           });
         });
+
       function lightON() {
         var data = {
           lcdbkB: "0",
@@ -121,7 +136,8 @@
           relay1: "0",
         };
         //update PI CONTROL
-        database.ref("PI_04_CONTROL").update(data);
+        // database.ref("PI_04_CONTROL").update(data);
+        database.ref("PI_05_CONTROL").update(data);
         document.getElementById("currentStatus").textContent = "Lamp light up";
       }
       function lightOFF() {
@@ -133,7 +149,7 @@
           relay1: "1",
         };
         //update PI CONTROL
-        database.ref("PI_04_CONTROL").update(data);
+        database.ref("PI_05_CONTROL").update(data);
         document.getElementById("currentStatus").textContent = "Lamp is closed";
       }
     </script>
