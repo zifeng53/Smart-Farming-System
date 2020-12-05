@@ -136,7 +136,7 @@
         relay1: "0",
         relay2: "0"
       }
-      // database.ref('PI_04_CONTROL').update(starting);
+      database.ref('PI_04_CONTROL').update(starting);
 
       database.ref('/PI_04_' + yyyy + mm + dd + '/' + hour).limitToLast(1).on('value', function (snapshot) {
         snapshot.forEach(function (childSnapshot) {
@@ -155,7 +155,7 @@
               relay2: "0"
             }
             //update PI CONTROL
-            // database.ref('PI_04_CONTROL').update(data);
+            database.ref('PI_04_CONTROL').update(data);
           }
 
           function f_Sound() {
@@ -169,7 +169,7 @@
               relay2: "1"
             }
             //update PI CONTROL
-            // database.ref('PI_04_CONTROL').update(data);
+            database.ref('PI_04_CONTROL').update(data);
           }
 
           if (sound > 400) {
